@@ -1,16 +1,15 @@
-import sys
-from pathlib import Path
+from scripts.deputado_extraction import main as deputado_main
 
-# Garante que a pasta raiz esteja no path (se necessário)
-sys.path.append(str(Path(__file__).resolve().parent))
-
-# Importa a função da subpasta
-from scripts.deputado_extraction import extraction_deputado
-from config import RAW_DATA
 
 def main():
+    print("##############################")
+    print("## Semantic ETL Pipilines - ##")
+    print("##############################")
+    print("\n")
+
     print("Iniciando extração dos deputados...")
-    extraction_deputado(RAW_DATA)
+    deputado_main()
 
 if __name__ == "__main__":
     main()
+

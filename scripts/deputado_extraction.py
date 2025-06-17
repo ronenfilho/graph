@@ -57,10 +57,6 @@ def fetch_all_deputados(idLegislatura=57):
 
 def extraction_deputado(directory):
     '''Extração - Deputados Federais'''
-
-    print("##########################")
-    print("## Extração - Deputados ##")
-    print("##########################")
     
     idLegislatura = "57" # Legislatura atual
 
@@ -68,5 +64,13 @@ def extraction_deputado(directory):
     filepath = os.path.join(directory, "deputados_legisl_"+idLegislatura+".csv")
     save_to_csv(deputados, filepath)
 
-if __name__ == "__main__":
+def main():
+    print("##########################")
+    print("## Extração - Deputados ##")
+    print("##########################")
+    print("\n")
+
     extraction_deputado(RAW_DATA)
+
+if __name__ == "__main__":
+    main()    
