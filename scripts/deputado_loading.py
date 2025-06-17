@@ -1,6 +1,17 @@
 from rdflib import Graph
 import networkx as nx
 import matplotlib.pyplot as plt
+import os
+import sys
+from pathlib import Path
+from etl.neo4j_utils import save_graph_to_neo4j
+#from rdflib_neo4j import Neo4jStore, Neo4jStoreConfig, HANDLE_VOCAB_URI_STRATEGY
+from rdflib import URIRef
+
+# Adiciona a raiz do projeto ao sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+from config import PROCESSED_DATA
 
 def load_rdf_graph(nt_file):
     """
@@ -54,9 +65,15 @@ def main():
     print("## Carga - Deputados ##")
     print("########################")
 
-    nt_file = os.path.join(directory, "deputados_legisl_57.nt")
+    idLegislatura = "57" # Legislatura atual'
     deputado_id = 204445  # ID de Abílio Santana
+
+    nt_file = os.path.join(PROCESSED_DATA, "deputados_legisl_"+idLegislatura+".nt")        
+    
     rdf_graph = load_rdf_graph(nt_file)
+    # Salva no Neo4j    
+    save_graph_to_neo4j(rdf_graph)
+
     filtered_graph = filter_graph_for_deputado(rdf_graph, deputado_id)
     nx_graph = convert_to_networkx(filtered_graph)
     plot_graph(nx_graph, title="Deputado: Fernando Mineiro")

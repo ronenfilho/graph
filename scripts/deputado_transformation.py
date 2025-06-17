@@ -5,6 +5,7 @@ from rdflib import Graph, Literal, RDF, URIRef, Namespace
 from rdflib.namespace import FOAF, XSD
 import os
 from rdflib_neo4j import Neo4jStore, Neo4jStoreConfig, HANDLE_VOCAB_URI_STRATEGY
+from etl.io_utils import load_csv
 
 # Adiciona a raiz do projeto ao sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -17,7 +18,7 @@ SCHEMA = Namespace("http://schema.org/")
 POL = Namespace("http://purl.org/ontology/politico/")
 BR = Namespace("https://dadosabertos.camara.leg.br/recurso/")
 
-def load_deputados_csv(filepath): 
+def load_csv(filepath): 
     """
     Carrega o CSV dos deputados em um DataFrame pandas.
     """
@@ -137,14 +138,11 @@ def main():
     csv_path = os.path.join(RAW_DATA, "deputados_legisl_"+idLegislatura+".csv")
     output_path = os.path.join(PROCESSED_DATA, "deputados_legisl_"+idLegislatura+".nt")
 
-    df = load_deputados_csv(csv_path)
+    df = load_csv(csv_path)
     g = build_rdf_graph_from_dataframe(df)
 
     # Salva como .nt
     save_graph_as_nt(g, output_path)
-
-    # Salva no Neo4j
-    save_graph_to_neo4j(g)
 
 if __name__ == "__main__":
     main()
