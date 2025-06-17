@@ -4,6 +4,7 @@ import os
 
 from scripts import deputado_extraction, deputado_transformation, deputado_loading
 from config import RAW_DATA, PROCESSED_DATA, IMG_DATA, ID_LEGISLATURA
+from etl.neo4j_utils import visualize_rdf_graph_neo4j
 
 st.set_page_config(page_title="ETL - Deputados", layout="centered")
 # Exemplos de emojis para títulos:
@@ -16,21 +17,85 @@ st.set_page_config(page_title="ETL - Deputados", layout="centered")
 # 📈 Gráfico
 # 🧠 Inteligência
 # 🔄 Atualizar
+# 🔍 (Lupa) - Representa busca ou pesquisa.
+# 📜 (Pergaminho) - Representa consulta em documentos históricos ou detalhados.
+# 🛠️ (Ferramenta) - Indica consulta técnica ou funcional.
+# 💡 (Lâmpada) - Sugere descoberta ou insights durante a consulta.
 
 
 st.title("⚙️ ETL de Deputados Federais")
-st.markdown("### Estudo de caso: Dados Abertos da Câmara dos Deputados")
 
 csv_path = os.path.join(RAW_DATA, f"deputados_legisl_{ID_LEGISLATURA}.csv")
 nt_path = os.path.join(PROCESSED_DATA, f"deputados_legisl_{ID_LEGISLATURA}.nt")
 
 # Menu principal com abas
 menu = st.sidebar.radio(
-        "Menu", ["🏛️ Início", "🧑‍💼ETL - Deputado"],
+        "Menu", ["🏛️ Início", "🧑‍💼ETL - Deputado", "🔍 Consulta - Cypher"],
         help="Selecione uma opção para iniciar o processo ETL."
         )
 
+if menu == "🔍 Consulta - Cypher":
+    st.markdown("### 🔍 Visualizador de Grafo RDF - Deputados")
+
+    # Exemplos de consultas Cypher
+    example_queries = {
+        "Deputados e seus IDs": 
+            """
+            MATCH (d:Person) RETURN d.name AS nome, d.identifier AS id LIMIT 10
+            """,
+        "Deputados por Partido": 
+            """
+            MATCH (d:Person)-[:memberOf]->(p:Organization)
+            RETURN p.name AS partido, COUNT(d) AS total_deputados
+            ORDER BY total_deputados DESC
+            """,
+        "Deputados GO e Partidos": 
+            """
+            MATCH (d:Person)-[:addressRegion]->(uf:Place {name: "GO"})
+            MATCH (d)-[:memberOf]->(p:Organization)
+            RETURN d, uf, p
+            LIMIT 10
+            """,
+        "Deputados e Mandatos": 
+            """
+            MATCH (d:Person)
+            RETURN d.name AS deputado, d.identifier AS id, d.legislatura AS legislatura
+            ORDER BY d.legislatura DESC
+            """
+    }
+
+    # Estado para mostrar/ocultar exemplos
+    show_examples = st.checkbox("Mostrar exemplos de consultas", value=False)
+
+    # Estado para consulta Cypher
+    if "cypher_query" not in st.session_state:
+        st.session_state.cypher_query = list(example_queries.values())[0]
+
+    if show_examples:
+        st.markdown("#### Exemplos de consultas:")
+        for label, query in example_queries.items():
+            if st.button(label, key=f"btn_{label}"):
+                st.session_state.cypher_query = query
+            st.code(f"// {label}\n{query}", language="cypher")
+
+    cypher_query = st.text_area(
+        "Digite sua consulta Cypher:",
+        st.session_state.cypher_query,
+        key="cypher_query_area"
+    )
+
+    if st.button("Executar consulta"):
+        with st.spinner("Executando..."):
+            data = visualize_rdf_graph_neo4j(cypher_query)
+            if data:
+                df = pd.DataFrame(data)
+                st.success("Consulta realizada com sucesso!")
+                st.dataframe(df)
+            else:
+                st.warning("Nenhum resultado encontrado.")
+
 if menu == "🏛️ Início":
+    st.markdown("### Estudo de caso: Dados Abertos da Câmara dos Deputados")
     st.image(
         os.path.join(IMG_DATA, "etl_semantic_pipeline.png"),
         caption="Pipeline ETL Semântico",

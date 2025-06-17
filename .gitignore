@@ -4,8 +4,8 @@
 ### Python ###
 # Folders and files that should be ignored by git in Python projects
 data/
-*.csv
-*.nt
+#*.csv
+#*.nt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

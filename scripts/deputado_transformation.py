@@ -10,7 +10,7 @@ from etl.io_utils import load_csv
 # Adiciona a raiz do projeto ao sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from config import RAW_DATA, PROCESSED_DATA, ID_LEGISLATURA, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, NEO4J_DATABASE
+from config import RAW_DATA, PROCESSED_DATA, ID_LEGISLATURA
 
 
 # Namespaces
@@ -82,17 +82,6 @@ def save_graph_as_nt(g, output_path):
     """
     g.serialize(destination=output_path, format="nt")
     print(f"[INFO] Arquivo N-Triples '{output_path}' salvo com sucesso!")
-
-def connect_neo4j(uri=NEO4J_URI, user=NEO4J_USER, password=NEO4J_PASSWORD, database=NEO4J_DATABASE):
-    """
-    Conecta ao banco Neo4j usando rdflib-neo4j e retorna a store.
-    """
-    config = Neo4jStoreConfig(
-        auth_data={"uri": uri, "user": user, "pwd": password, "database": database},
-        handle_vocab_uri_strategy=HANDLE_VOCAB_URI_STRATEGY.MAP,
-        batching=True
-    )
-    return Neo4jStore(config=config)
 
 def save_graph_to_neo4j(original_graph):
     """

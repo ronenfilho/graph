@@ -1,7 +1,8 @@
 import os
 import matplotlib.pyplot as plt
 import networkx as nx
-from config import IMG_DATA
+from config import IMG_DATA, NEO4J_PASSWORD, NEO4J_USER, NEO4J_URI, NEO4J_DATABASE
+
 
 def get_file_path(base_dir, filename):
     """
@@ -37,3 +38,5 @@ def plot_graph(nx_graph, title="Visualização do Grafo RDF", file_name="img_gra
     plt.close()
     print(f"[INFO] Grafo RDF convertido para NetworkX com {nx_graph.number_of_nodes()} nós e {nx_graph.number_of_edges()} arestas.")
     print(f"[INFO] Grafo RDF plotado e salvo como {save_path}.")
+
+    
