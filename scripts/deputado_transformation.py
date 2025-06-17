@@ -10,7 +10,7 @@ from etl.io_utils import load_csv
 # Adiciona a raiz do projeto ao sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from config import RAW_DATA, PROCESSED_DATA
+from config import RAW_DATA, PROCESSED_DATA, ID_LEGISLATURA, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, NEO4J_DATABASE
 
 
 # Namespaces
@@ -83,7 +83,7 @@ def save_graph_as_nt(g, output_path):
     g.serialize(destination=output_path, format="nt")
     print(f"[INFO] Arquivo N-Triples '{output_path}' salvo com sucesso!")
 
-def connect_neo4j(uri="bolt://192.168.0.48:7687", user="neo4j", password="Adsumus@9", database="neo4j"):
+def connect_neo4j(uri=NEO4J_URI, user=NEO4J_USER, password=NEO4J_PASSWORD, database=NEO4J_DATABASE):
     """
     Conecta ao banco Neo4j usando rdflib-neo4j e retorna a store.
     """
@@ -132,11 +132,8 @@ def main():
     print("########################")
     print("\n")
 
-    idLegislatura = "57" # Legislatura atual'
-
-    #filepath = os.path.join(directory, "deputados_legisl_"+idLegislatura+".csv")
-    csv_path = os.path.join(RAW_DATA, "deputados_legisl_"+idLegislatura+".csv")
-    output_path = os.path.join(PROCESSED_DATA, "deputados_legisl_"+idLegislatura+".nt")
+    csv_path = os.path.join(RAW_DATA, f"deputados_legisl_{ID_LEGISLATURA}.csv")
+    output_path = os.path.join(PROCESSED_DATA, f"deputados_legisl_{ID_LEGISLATURA}.nt")
 
     df = load_csv(csv_path)
     g = build_rdf_graph_from_dataframe(df)

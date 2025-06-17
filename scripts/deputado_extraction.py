@@ -7,7 +7,7 @@ from pathlib import Path
 # Adiciona a raiz do projeto ao sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from config import RAW_DATA
+from config import RAW_DATA, ID_LEGISLATURA, ID_DEPUTADO
 
 
 def save_to_csv(data, filepath):
@@ -58,10 +58,10 @@ def fetch_all_deputados(idLegislatura=57):
 def extraction_deputado(directory):
     '''Extração - Deputados Federais'''
     
-    idLegislatura = "57" # Legislatura atual
+    idLegislatura = ID_LEGISLATURA
 
     deputados = fetch_all_deputados(idLegislatura)
-    filepath = os.path.join(directory, "deputados_legisl_"+idLegislatura+".csv")
+    filepath = os.path.join(directory, f"deputados_legisl_{ID_LEGISLATURA}.csv")
     save_to_csv(deputados, filepath)
 
 def main():

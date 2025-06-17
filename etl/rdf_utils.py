@@ -62,3 +62,12 @@ def save_graph_as_nt(g, output_path):
     """
     g.serialize(destination=output_path, format="nt")
     print(f"[INFO] Arquivo N-Triples '{output_path}' salvo com sucesso!")
+
+def load_rdf_graph(nt_file):
+    """
+    Carrega o arquivo N-Triples em um grafo RDFLib.
+    """
+    g = Graph()
+    g.parse(nt_file, format="nt")
+    print(f"[INFO] Grafo RDF carregado com {len(g)} triplas.")
+    return g    
