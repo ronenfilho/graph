@@ -1,8 +1,15 @@
+import sys
+from pathlib import Path
 import pandas as pd
 from rdflib import Graph, Literal, RDF, URIRef, Namespace
 from rdflib.namespace import FOAF, XSD
 import os
 from rdflib_neo4j import Neo4jStore, Neo4jStoreConfig, HANDLE_VOCAB_URI_STRATEGY
+
+# Adiciona a raiz do projeto ao sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+from config import RAW_DATA, PROCESSED_DATA
 
 
 # Namespaces
@@ -122,14 +129,13 @@ def main():
     print("########################")
     print("## Transformação - Deputados ##")
     print("########################")
+    print("\n")
 
     idLegislatura = "57" # Legislatura atual'
 
-    #directory = '/content/drive/MyDrive/1-Acadêmico/___IA - IFG - 2025/Disciplina/202501 - Linguagem de Programação Aplicada/_IFG - Ling. Programação - Projeto 1/dataset'
-    filepath = os.path.join(directory, "deputados_legisl_"+idLegislatura+".csv")
-
-    csv_path = os.path.join(directory, "deputados_legisl_"+idLegislatura+".csv")
-    output_path = os.path.join(directory, "deputados_legisl_"+idLegislatura+".nt")
+    #filepath = os.path.join(directory, "deputados_legisl_"+idLegislatura+".csv")
+    csv_path = os.path.join(RAW_DATA, "deputados_legisl_"+idLegislatura+".csv")
+    output_path = os.path.join(PROCESSED_DATA, "deputados_legisl_"+idLegislatura+".nt")
 
     df = load_deputados_csv(csv_path)
     g = build_rdf_graph_from_dataframe(df)
