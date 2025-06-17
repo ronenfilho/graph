@@ -2,7 +2,6 @@ import pandas as pd
 from rdflib import Graph, Literal, RDF, URIRef, Namespace
 from rdflib.namespace import FOAF, XSD
 import os
-# from google.colab import userdata
 from rdflib_neo4j import Neo4jStore, Neo4jStoreConfig, HANDLE_VOCAB_URI_STRATEGY
 
 
@@ -119,6 +118,10 @@ def main():
     """
     Fluxo completo: carrega CSV, cria grafo RDF e salva N-Triples.
     """
+
+    print("########################")
+    print("## Transformação - Deputados ##")
+    print("########################")
 
     idLegislatura = "57" # Legislatura atual'
 

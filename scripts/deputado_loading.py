@@ -49,8 +49,11 @@ def filter_graph_for_deputado(rdf_graph, deputado_id):
             #print(f"[INFO] Grafo filtrado com {len(filtered_graph)} triplas.")
     return filtered_graph
 
-def main():
-    #directory = '/content/drive/MyDrive/1-Acadêmico/___IA - IFG - 2025/Disciplina/202501 - Linguagem de Programação Aplicada/_IFG - Ling. Programação - Projeto 1/dataset'
+def main():    
+    print("########################")
+    print("## Carga - Deputados ##")
+    print("########################")
+
     nt_file = os.path.join(directory, "deputados_legisl_57.nt")
     deputado_id = 204445  # ID de Abílio Santana
     rdf_graph = load_rdf_graph(nt_file)

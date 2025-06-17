@@ -3,8 +3,9 @@
 
 ### Python ###
 # Folders and files that should be ignored by git in Python projects
+data/
+*.csv
 
-dataset/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
