@@ -7,7 +7,7 @@ from pathlib import Path
 # Adiciona a raiz do projeto ao sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from config import RAW_DATA, ID_LEGISLATURA, ID_DEPUTADO
+from graph.config import RAW_DATA, ID_LEGISLATURA, ID_DEPUTADO
 
 
 def save_to_csv(data, filepath):

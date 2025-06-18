@@ -3,7 +3,7 @@
 
 ### Python ###
 # Folders and files that should be ignored by git in Python projects
-data/
+data_/
 #*.csv
 #*.nt
 

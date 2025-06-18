@@ -1,10 +1,16 @@
 import streamlit as st
 import pandas as pd
 import os
-from scripts import deputado_extraction, deputado_transformation, deputado_loading
-from config import RAW_DATA, PROCESSED_DATA, IMG_DATA, ID_LEGISLATURA
-from etl.neo4j_utils import data_rdf_graph_neo4j, draw_neo4j_graph
-
+import sys
+from pathlib import Path
+# Caminho absoluto até a raiz do projeto (onde está o main.py)
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.append(str(ROOT_DIR))
+    
+from graph.core.etl import deputado_extraction, deputado_transformation, deputado_loading
+from graph.config import RAW_DATA, PROCESSED_DATA, IMG_DATA, ID_LEGISLATURA
+from graph.core.data.neo4j.neo4j_utils import data_rdf_graph_neo4j, draw_neo4j_graph
 
 st.set_page_config(page_title="ETL - Deputados", layout="centered")
 # Exemplos de emojis:
@@ -137,7 +143,7 @@ if menu == "🏛️ Início":
     """)
 
 if menu == "🧑‍💼ETL - Deputado":
-    tab1, tab2, tab3 = st.tabs(["🔁 Extração", "🔁 Transformação", "🔁 Carga"])
+    tab1, tab2, tab3 = st.tabs(["🔁 (1) Extração", "🔁 (2) Transformação", "🔁 (3) Carga"])
 
     # Aba de Extração
     with tab1:

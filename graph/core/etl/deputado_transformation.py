@@ -5,12 +5,12 @@ from rdflib import Graph, Literal, RDF, URIRef, Namespace
 from rdflib.namespace import FOAF, XSD
 import os
 from rdflib_neo4j import Neo4jStore, Neo4jStoreConfig, HANDLE_VOCAB_URI_STRATEGY
-from etl.io_utils import load_csv
+from graph.core.data.io_utils import load_csv
 
 # Adiciona a raiz do projeto ao sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from config import RAW_DATA, PROCESSED_DATA, ID_LEGISLATURA
+from graph.config import RAW_DATA, PROCESSED_DATA, ID_LEGISLATURA
 
 
 # Namespaces

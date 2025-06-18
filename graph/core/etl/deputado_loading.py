@@ -3,15 +3,15 @@ from rdflib import Graph
 import networkx as nx
 import sys
 from pathlib import Path
-from etl.neo4j_utils import save_graph_to_neo4j
-from etl.utils import convert_to_networkx, plot_graph
-from etl.rdf_utils import load_rdf_graph
+from graph.core.data.neo4j.neo4j_utils import save_graph_to_neo4j
+from graph.core.data.utils import convert_to_networkx, plot_graph
+from graph.core.data.rdf.rdf_utils import load_rdf_graph
 from rdflib import URIRef
 
 # Adiciona a raiz do projeto ao sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from config import PROCESSED_DATA, ID_LEGISLATURA, ID_DEPUTADO
+from graph.config import PROCESSED_DATA, ID_LEGISLATURA, ID_DEPUTADO
 
 
 def filter_graph_for_deputado(rdf_graph, deputado_id):

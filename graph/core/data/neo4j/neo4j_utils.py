@@ -1,6 +1,6 @@
 from rdflib import Graph
 from rdflib_neo4j import Neo4jStore, Neo4jStoreConfig, HANDLE_VOCAB_URI_STRATEGY
-from config import NEO4J_DATABASE, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
+from graph.config import NEO4J_DATABASE, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
 from neo4j import GraphDatabase
 from pyvis.network import Network
 import tempfile
