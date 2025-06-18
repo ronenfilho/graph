@@ -1,13 +1,13 @@
 import streamlit as st
 import pandas as pd
 import os
-
 from scripts import deputado_extraction, deputado_transformation, deputado_loading
 from config import RAW_DATA, PROCESSED_DATA, IMG_DATA, ID_LEGISLATURA
-from etl.neo4j_utils import visualize_rdf_graph_neo4j
+from etl.neo4j_utils import data_rdf_graph_neo4j, draw_neo4j_graph
+
 
 st.set_page_config(page_title="ETL - Deputados", layout="centered")
-# Exemplos de emojis para títulos:
+# Exemplos de emojis:
 # ⚙️ Engrenagem
 # 🏛️ Parlamento
 # 🗂️ Arquivo
@@ -21,7 +21,6 @@ st.set_page_config(page_title="ETL - Deputados", layout="centered")
 # 📜 (Pergaminho) - Representa consulta em documentos históricos ou detalhados.
 # 🛠️ (Ferramenta) - Indica consulta técnica ou funcional.
 # 💡 (Lâmpada) - Sugere descoberta ou insights durante a consulta.
-
 
 st.title("⚙️ ETL de Deputados Federais")
 
@@ -39,44 +38,50 @@ if menu == "🔍 Consulta - Cypher":
 
     # Exemplos de consultas Cypher
     example_queries = {
-        "Deputados e seus IDs": 
-            """
-            MATCH (d:Person) RETURN d.name AS nome, d.identifier AS id LIMIT 10
-            """,
-        "Deputados por Partido": 
-            """
-            MATCH (d:Person)-[:memberOf]->(p:Organization)
-            RETURN p.name AS partido, COUNT(d) AS total_deputados
-            ORDER BY total_deputados DESC
-            """,
-        "Deputados GO e Partidos": 
-            """
-            MATCH (d:Person)-[:addressRegion]->(uf:Place {name: "GO"})
-            MATCH (d)-[:memberOf]->(p:Organization)
-            RETURN d, uf, p
-            LIMIT 10
-            """,
-        "Deputados e Mandatos": 
-            """
-            MATCH (d:Person)
-            RETURN d.name AS deputado, d.identifier AS id, d.legislatura AS legislatura
-            ORDER BY d.legislatura DESC
-            """
+"Deputados e Relações 1": 
+"""MATCH (d:Person)-[r]->(n)
+WHERE type(r) IN ['memberOf', 'addressRegion']
+RETURN 
+  d.name AS source, 
+  type(r) AS rel, 
+  n.name AS target, 
+  labels(n)[0] AS target_type
+LIMIT 100""",        
+"Deputados e Relações": 
+"""MATCH (d:Person)-[r]->(n)
+RETURN d.name AS source, type(r) AS rel, n.name AS target LIMIT 10""",
+"Deputados e seus IDs": 
+"""MATCH (d:Person) RETURN d.name AS nome, d.identifier AS id LIMIT 10""",
+"Deputados por Partido": 
+"""MATCH (d:Person)-[:memberOf]->(p:Organization)
+RETURN p.name AS partido, COUNT(d) AS total_deputados
+ORDER BY total_deputados DESC""",
+"Deputados GO e Partidos": 
+"""MATCH (d:Person)-[:addressRegion]->(uf:Place {name: "GO"})
+MATCH (d)-[:memberOf]->(p:Organization)
+RETURN d, uf, p
+LIMIT 10""",
+"Deputados e Mandatos": 
+"""MATCH (d:Person)
+RETURN d.name AS deputado, d.identifier AS id, d.legislatura AS legislatura
+ORDER BY d.legislatura DESC""",
+"Deputado por UF":
+"""MATCH (d:Person)-[:addressRegion]->(uf:Place)
+RETURN uf.name AS estado, COUNT(d) AS total_deputados
+ORDER BY total_deputados DESC""",
+"Partidos e Estados onde atuam":
+"""MATCH (d:Person)-[:addressRegion]->(uf:Place)
+RETURN uf.name AS estado, COUNT(d) AS total_deputados
+ORDER BY total_deputados DESC""",
+"Deputado - Recursos RDF":
+"""MATCH (d:Person {identifier: 204396})-[r]-(n)
+RETURN d.name AS deputado, type(r) AS relacao, labels(n) AS tipo, n
+"""
     }
-
-    # Estado para mostrar/ocultar exemplos
-    show_examples = st.checkbox("Mostrar exemplos de consultas", value=False)
 
     # Estado para consulta Cypher
     if "cypher_query" not in st.session_state:
         st.session_state.cypher_query = list(example_queries.values())[0]
-
-    if show_examples:
-        st.markdown("#### Exemplos de consultas:")
-        for label, query in example_queries.items():
-            if st.button(label, key=f"btn_{label}"):
-                st.session_state.cypher_query = query
-            st.code(f"// {label}\n{query}", language="cypher")
 
     cypher_query = st.text_area(
         "Digite sua consulta Cypher:",
@@ -86,13 +91,31 @@ if menu == "🔍 Consulta - Cypher":
 
     if st.button("Executar consulta"):
         with st.spinner("Executando..."):
-            data = visualize_rdf_graph_neo4j(cypher_query)
-            if data:
+            data = data_rdf_graph_neo4j(cypher_query)
+            if data:                
                 df = pd.DataFrame(data)
                 st.success("Consulta realizada com sucesso!")
                 st.dataframe(df)
+
+                # Exibir grafo interativo
+                # Apenas se a consulta contiver colunas apropriadas
+                if {"source", "rel", "target"}.issubset(df.columns):
+                    st.markdown("### Visualização em Grafo")
+                    draw_neo4j_graph(cypher_query)
+                else:
+                   st.info("A visualização em grafo requer colunas: source | rel | target.")  
             else:
-                st.warning("Nenhum resultado encontrado.")
+                st.warning("Nenhum resultado encontrado.")            
+
+    # Estado para mostrar/ocultar exemplos
+    show_examples = st.checkbox("Mostrar exemplos de consultas", value=False) 
+
+    if show_examples:
+        st.markdown("#### Exemplos de consultas:")
+        for label, query in example_queries.items():
+            if st.button(label, key=f"btn_{label}"):
+                st.session_state.cypher_query = query                
+            st.code(f"// {label}\n{query}", language="cypher")
 
 if menu == "🏛️ Início":
     st.markdown("### Estudo de caso: Dados Abertos da Câmara dos Deputados")
