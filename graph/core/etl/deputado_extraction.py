@@ -7,17 +7,9 @@ from pathlib import Path
 # Adiciona a raiz do projeto ao sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from graph.config import RAW_DATA, ID_LEGISLATURA, ID_DEPUTADO
+from graph.config import RAW_DATA, ID_LEGISLATURA
+from graph.core.data.io_utils import save_to_csv
 
-
-def save_to_csv(data, filepath):
-    """
-    Salva a lista de deputados em um arquivo CSV.
-    """
-
-    df = pd.DataFrame(data)
-    df.to_csv(filepath, index=False, encoding="utf-8")
-    print(f"[INFO] Arquivo CSV '{filepath}' salvo com sucesso!")
 
 def fetch_deputados(ordem="ASC", ordenar_por="nome", pagina=1, idLegislatura=57):
     """

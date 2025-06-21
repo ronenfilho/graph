@@ -1,7 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import networkx as nx
-from graph.config import IMG_DATA, NEO4J_PASSWORD, NEO4J_USER, NEO4J_URI, NEO4J_DATABASE
+from graph.config import IMG_DATA
 
 
 def get_file_path(base_dir, filename):

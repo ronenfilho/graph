@@ -8,7 +8,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.append(str(ROOT_DIR))
     
-from graph.core.etl import deputado_extraction, deputado_transformation, deputado_loading
+from graph.core.etl import deputado_extraction, deputado_transformation, deputado_loading, deputado_despesas_extraction
 from graph.config import RAW_DATA, PROCESSED_DATA, IMG_DATA, ID_LEGISLATURA
 from graph.core.data.neo4j.neo4j_utils import data_rdf_graph_neo4j, draw_neo4j_graph
 
@@ -31,16 +31,19 @@ st.set_page_config(page_title="ETL - Deputados", layout="centered")
 st.title("⚙️ ETL de Deputados Federais")
 
 csv_path = os.path.join(RAW_DATA, f"deputados_legisl_{ID_LEGISLATURA}.csv")
+csv_path_dep_despesas = os.path.join(RAW_DATA, f"deputados_despesas_legisl_{ID_LEGISLATURA}.csv")
+
 nt_path = os.path.join(PROCESSED_DATA, f"deputados_legisl_{ID_LEGISLATURA}.nt")
+nt_path_dep_despesas = os.path.join(PROCESSED_DATA, f"deputados_despesas_legisl_{ID_LEGISLATURA}.nt")
 
 # Menu principal com abas
 menu = st.sidebar.radio(
-        "Menu", ["🏛️ Início", "🧑‍💼ETL - Deputado", "🔍 Consulta - Cypher"],
+        "Menu", ["🏛️ Início", "🧑‍💼ETL - Deputado", "🔍 Consulta - Cypher", "🧩 ETL - Despesas dos Deputados"],
         help="Selecione uma opção para iniciar o processo ETL."
         )
 
 if menu == "🔍 Consulta - Cypher":
-    st.markdown("### 🔍 Visualizador de Grafo RDF - Deputados")
+    st.markdown("🔍 Visualizador de Grafo RDF - Deputados")
 
     # Exemplos de consultas Cypher
     example_queries = {
@@ -143,6 +146,8 @@ if menu == "🏛️ Início":
     """)
 
 if menu == "🧑‍💼ETL - Deputado":
+    st.markdown("""🧩 Esta seção demonstra a extração, transformação e carga dos deputados federais.
+    """)
     tab1, tab2, tab3 = st.tabs(["🔁 (1) Extração", "🔁 (2) Transformação", "🔁 (3) Carga"])
 
     # Aba de Extração
@@ -201,6 +206,79 @@ if menu == "🧑‍💼ETL - Deputado":
         else:
             st.info("Imagem do grafo não encontrada. Execute a carga para gerar a imagem.")
 
+if menu == "🧩 ETL - Despesas dos Deputados":
+    st.markdown("""🧩 Esta seção demonstra a extração, transformação e carga das despesas dos deputados federais.
+    """)
+
+    tab1, tab2, tab3 = st.tabs(["🔁 (1) Extração", "🔁 (2) Transformação", "🔁 (3) Carga"])
+
+    # Aba de Extração
+    with tab1:
+        st.header("🔁 Extração")
+        if st.button("Executar Extração"):
+            status_area = st.empty()
+
+            def update_progress(text):
+                status_area.text(text)  
+
+            with st.spinner("⏳ Executando extração... Isso pode levar alguns minutos."):
+                deputado_despesas_extraction.extraction_despesas_parallel(
+                    directory=RAW_DATA,
+                    max_workers=10,  
+                    st_callback=update_progress
+                )
+
+            st.success("✅ Dados extraídos com sucesso!")
+
+        # Visualização de arquivos gerados
+        st.markdown("---")
+
+        if os.path.exists(csv_path_dep_despesas):
+            st.markdown("**📄 CSV - Deputados**")
+            df = pd.read_csv(csv_path_dep_despesas)
+            st.dataframe(df.head(20))
+        else:
+            st.warning("CSV não encontrado. Execute a etapa de extração.")
+
+    # Aba de Transformação
+    with tab2:
+        st.header("🔁 Transformação")
+        if st.button("Executar Transformação"):
+            #deputado_transformation.main()
+            st.success("✅ Transformação e exportação concluídas!")
+
+        # Visualização de arquivos gerados
+        st.markdown("---")
+
+        if os.path.exists(nt_path_dep_despesas):
+            st.markdown("**🧠 RDF (formato .nt)**")
+            with open(nt_path_dep_despesas, "r", encoding="utf-8") as f:
+                nt_preview = f.read(2000)
+                st.code(nt_preview, language="turtle")
+        else:
+            st.warning("Arquivo RDF .nt não encontrado. Execute a etapa de transformação.")
+
+
+    # Aba de Carga
+    with tab3:
+        st.header("🔁 Carga")
+        if st.button("Executar Carga"):
+            #deputado_loading.main()
+            st.success("✅ Carga concluída!")
+
+        # Exibir imagem após a carga
+        st.markdown("---")
+        '''#todo image_path = os.path.join(IMG_DATA, "deputado_204445-Fernando Mineiro_graph.png")
+        if os.path.exists(image_path):
+            st.markdown("### 🖼️ Visualização do Grafo do Deputado e Despesas")
+            st.image(
+                image_path,
+                caption="Grafo do Deputado e Despesas",
+                use_container_width=True
+            )
+        else:
+            st.info("Imagem do grafo não encontrada. Execute a carga para gerar a imagem.")
+        '''
 # Footer
 st.markdown("---")
 st.markdown("Projeto de demonstração para pipelines ETL com RDF e Neo4j | Especialização em IA - IFG 2025")

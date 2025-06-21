@@ -2263,6 +2263,7 @@
 <https://dadosabertos.camara.leg.br/recurso/deputado/104552> <http://purl.org/ontology/politico/legislatura> "57"^^<http://www.w3.org/2001/XMLSchema#integer> .
 <https://dadosabertos.camara.leg.br/recurso/deputado/220564> <http://schema.org/image> <https://www.camara.leg.br/internet/deputado/bandep/220564.jpg> .
 <https://dadosabertos.camara.leg.br/recurso/deputado/74159> <http://schema.org/image> <https://www.camara.leg.br/internet/deputado/bandep/74159.jpg> .
+<https://dadosabertos.camara.leg.br/recurso/deputado/220624> <http://schema.org/memberOf> <https://dadosabertos.camara.leg.br/api/v2/partidos/37903> .
 <https://dadosabertos.camara.leg.br/recurso/deputado/178929> <http://purl.org/ontology/politico/legislatura> "57"^^<http://www.w3.org/2001/XMLSchema#integer> .
 <https://dadosabertos.camara.leg.br/recurso/deputado/178946> <http://schema.org/name> "Soraya Santos" .
 <https://dadosabertos.camara.leg.br/recurso/deputado/204534> <http://schema.org/email> "dep.tabataamaral@camara.leg.br" .
@@ -4012,7 +4013,6 @@
 <https://dadosabertos.camara.leg.br/recurso/deputado/160552> <http://schema.org/addressRegion> <https://dadosabertos.camara.leg.br/recurso/uf/RS> .
 <https://dadosabertos.camara.leg.br/recurso/deputado/153423> <http://xmlns.com/foaf/0.1/page> <https://dadosabertos.camara.leg.br/api/v2/deputados/153423> .
 <https://dadosabertos.camara.leg.br/recurso/deputado/220627> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://schema.org/Person> .
-<https://dadosabertos.camara.leg.br/recurso/deputado/220624> <http://schema.org/memberOf> <https://dadosabertos.camara.leg.br/api/v2/partidos/37906> .
 <https://dadosabertos.camara.leg.br/recurso/deputado/220620> <http://schema.org/addressRegion> <https://dadosabertos.camara.leg.br/recurso/uf/MG> .
 <https://dadosabertos.camara.leg.br/recurso/deputado/220605> <http://purl.org/ontology/politico/legislatura> "57"^^<http://www.w3.org/2001/XMLSchema#integer> .
 <https://dadosabertos.camara.leg.br/recurso/deputado/178860> <http://schema.org/addressRegion> <https://dadosabertos.camara.leg.br/recurso/uf/BA> .
